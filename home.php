@@ -1,49 +1,48 @@
 <?php
 session_start(); 
 
-// Redirect to login if not logged in
+
 if (!isset($_SESSION["email"])) {
     header("Location: login.php");
     exit();
 }
 
-// Retrieve session variables
+
 $firstname = $_SESSION["firstname"];
 $lastname = $_SESSION["lastname"];
 $email = $_SESSION["email"];
 
-// Database connection setup
+
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "users";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check for connection errors
+
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Handle file upload
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["uploaded_file"])) {
   $target_dir = "uploads/";
   if (!is_dir($target_dir)) {
-      mkdir($target_dir, 0777, true); // Create uploads directory if not exists
+      mkdir($target_dir, 0777, true); 
   }
   $file_name = basename($_FILES["uploaded_file"]["name"]);
   $target_file = $target_dir . $file_name;
   $uploadOk = 1;
 
-  // Check file type
   $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
   if ($file_type != "php") {
       $uploadOk = 0;
       echo "<div class='alert alert-danger'>Only PHP files are allowed.</div>";
   }
 
-  // Attempt to upload
+  
   if ($uploadOk && move_uploaded_file($_FILES["uploaded_file"]["tmp_name"], $target_file)) {
-      // Insert file details into database
+    
       $stmt = $conn->prepare("INSERT INTO uploads (email, file_name, file_path) VALUES (?, ?, ?)");
       $stmt->bind_param("sss", $email, $file_name, $target_file);
       $stmt->execute();
@@ -56,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["uploaded_file"])) {
 }
 
 
-// Handle commentary submission
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["comment"])) {
     $comment = htmlspecialchars($_POST["comment"]);
     $stmt = $conn->prepare("INSERT INTO comments (email, comment) VALUES (?, ?)");
@@ -121,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["comment"])) {
     <h2 class="mt-4">Your Comments</h2>
     <ul class="list-group">
         <?php
-        // Fetch and display comments by the user
+   
         $stmt = $conn->prepare("SELECT comment, created_at FROM comments WHERE email = ? ORDER BY created_at DESC");
         $stmt->bind_param("s", $email);
         $stmt->execute();

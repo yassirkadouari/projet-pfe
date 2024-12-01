@@ -17,6 +17,7 @@ $nameValue = "";
 $lnameValue = "";
 $emailValue = "";
 $passwordValue = "";
+$fonctionValue= "";
 $errorMsg = "";
 
 if (isset($_POST['submit'])) {
@@ -24,6 +25,7 @@ if (isset($_POST['submit'])) {
     $lnameValue = $_POST['lname'];
     $emailValue = $_POST['email'];
     $passwordValue = $_POST['password'];
+    $fonctionValue = $_POST['fonction'];
 
   
     if (empty($nameValue) || empty($emailValue) || empty($lnameValue) || empty($passwordValue)) {
@@ -34,9 +36,11 @@ if (isset($_POST['submit'])) {
         $errorMsg = "Please insert at least 1 uppercase letter!";
     } else {
         
+
         $passwordHash = password_hash($passwordValue, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO cclients (firstname, lastname, email, password) VALUES ('$nameValue', '$lnameValue', '$emailValue', '$passwordHash')";
+        $sql = "INSERT INTO cclients (firstname, lastname, email, password, fonction) VALUES ('$nameValue', '$lnameValue', '$emailValue', '$passwordHash', '$fonctionValue')";
+
 
         if (mysqli_query($conn, $sql)) {
             $sucMsg = "New record created successfully";
@@ -150,9 +154,10 @@ if (isset($_POST['submit'])) {
         <form method="post">
             <input type="text" class="form-control" name="fname" placeholder="First Name" value="<?php echo $nameValue; ?>">
             <input type="text" class="form-control" name="lname" placeholder="Last Name" value="<?php echo $lnameValue; ?>">
-            <input type="email" class="form-control" name="email" placeholder="Email">
+            <input type="email" class="form-control" name="email" placeholder="Email" value="<?php echo $emailValue; ?>">
             <input type="password" class="form-control" name="password" placeholder="Password">
             <input type="password" class="form-control" name="passwo" placeholder="Confirm Password">
+            <input type="text" class="form-control" name="fonction" placeholder="Function" value="<?php echo $fonctionValue; ?>">
             <button type="submit" name="submit" class="btn-submit">Sign Up</button>
         </form>
 

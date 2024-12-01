@@ -5,7 +5,7 @@ $password = "";
 $dbname = "users";
 $emailerreur = "";
 $passworderreur = "";
-
+$erormsg = "";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if (isset($_POST["submit"])) {
@@ -27,17 +27,29 @@ if (isset($_POST["submit"])) {
         $result = $conn->query($query);
 
         if ($result->num_rows == 1) {
-            $user = $result->fetch_assoc(); // Récupérer les données de l'utilisateur
+            $user = $result->fetch_assoc();
             
-            // Vérifier le mot de passe hashé
             if (password_verify($passwordValue, $user['password'])) {
-                // Mot de passe valide
+               
                 session_start();
                 $_SESSION["email"] = $emailValue;
-                $_SESSION["firstname"] = $user["firstname"]; // Utiliser les données récupérées
+                $_SESSION["firstname"] = $user["firstname"];
                 $_SESSION["lastname"] = $user["lastname"];
+                $_SESSION["fonction"] = $user["fonction"]; 
 
-                header("location:home.php");
+                switch ($user['fonction']) {
+                    case 'admin':
+                        header("Location: home_admin.php");
+                        break;
+                    case 'prof':
+                        header("Location: home_prof.php");
+                        break;
+                    case 'student':
+                        header("Location: home.php");
+                        break;
+                    default:
+                        $erormsg = "Invalid function specified.";
+                }
                 exit();
             } else {
                 $erormsg = "Mot de passe incorrect.";

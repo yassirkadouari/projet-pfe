@@ -6,7 +6,7 @@ if (!isset($_SESSION["email"])) {
     exit();
 }
 
-// Database connection
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -17,9 +17,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$email = $_SESSION["email"]; // Professor's email from session
+$email = $_SESSION["email"];
 
-// Handle adding comments
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_comment"])) {
     $file_email = $conn->real_escape_string($_POST["file_email"]);
     $comment = $conn->real_escape_string($_POST["comment"]);
@@ -32,11 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_comment"])) {
     }
 }
 
-// Fetch uploaded files
+
 $query = "SELECT * FROM uploads ORDER BY uploaded_at DESC";
 $uploads = $conn->query($query);
 
-// Fetch comments
 $query = "SELECT * FROM comments WHERE email = '$email' ORDER BY created_at DESC";
 $comments = $conn->query($query);
 ?>
@@ -61,12 +60,11 @@ $comments = $conn->query($query);
 <div class="container mt-4">
     <h1>Professor Dashboard</h1>
 
-    <!-- Display Message -->
     <?php if (isset($message)): ?>
         <div class="alert alert-info"><?= $message ?></div>
     <?php endif; ?>
 
-    <!-- Uploaded Files -->
+
     <h2>Uploaded Files</h2>
     <?php if ($uploads->num_rows > 0): ?>
         <table class="table table-bordered">
@@ -102,14 +100,12 @@ $comments = $conn->query($query);
         <p>No files uploaded yet.</p>
     <?php endif; ?>
 
-    <!-- Professor Notes -->
     <h2>Professor Notebook</h2>
     <form method="POST">
         <textarea name="comment" class="form-control" rows="4" placeholder="Write your notes here..." required></textarea>
         <button type="submit" name="add_comment" class="btn btn-success mt-2">Save Note</button>
     </form>
 
-    <!-- Display Notes -->
     <h3>Your Notes</h3>
     <?php if ($comments->num_rows > 0): ?>
         <ul class="list-group mt-3">
